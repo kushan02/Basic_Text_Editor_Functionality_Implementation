@@ -156,29 +156,6 @@ class EnhancedEditor:
         self.paste_head = self.document_cursor
         self.paste_blob_length = j - i
         self.copy_deferred_boundary = (i, j)
-        # if i < self.copy_deferred_boundary[1]:
-        #     self.copy_deferral_override = True
-        #     self.copy(*self.copy_deferred_boundary)
-
-        # if self.copy_deferral_override:
-        #     copy_selected_word_count = 0
-        #     paste_tail = None
-        #     temp_cursor = self.document_cursor
-        #     while copy_selected_word_count < j - i and temp_cursor is not None:
-        #         if copy_selected_word_count == 0:
-        #             self.paste_head = EnhancedEditor.Word(temp_cursor.text, prev=None, next=None)
-        #             paste_tail = self.paste_head
-        #         else:
-        #             new_word = EnhancedEditor.Word(temp_cursor.text, prev=paste_tail, next=None)
-        #             paste_tail.next = new_word
-        #             paste_tail = paste_tail.next
-        #
-        #         temp_cursor = temp_cursor.next
-        # else:
-        #     self.paste_head = self.document_cursor
-
-        # self.copy_deferral_override = False
-        # self.copy_deferred_boundary = (i, j)
 
     def paste(self, i):
         if i > self.word_count:
@@ -215,20 +192,6 @@ class EnhancedEditor:
         self.paste_head.prev = self.document_cursor
         last_word.prev = self.paste_tail
         self.paste_tail.next = last_word
-
-        # paste_pointer = self.paste_head
-        # paste_count = 0
-        # while paste_pointer is not None and paste_count < self.paste_blob_length:
-        #     paste_text = paste_pointer.text
-        #     paste_pointer = paste_pointer.next
-        #     new_word = EnhancedEditor.Word(paste_text, prev=self.document_cursor, next=last_word)
-        #     self.document_cursor.next = new_word
-        #     self.document_cursor = new_word
-        #     if last_word is not None:
-        #         last_word.prev = new_word
-        #
-        #     self.word_count += 1
-        #     paste_count += 1
 
     def get_text(self):
         # We are using a generator object for avoiding memory constraints when dealing with large texts
@@ -358,7 +321,8 @@ if __name__ == "__main__":
 
     TEST_ITERATIONS = 1000
 
-    test_data = EditorBenchmarker.load_small_data_files()
+    # Load files using either: small, medium or large files
+    test_data = EditorBenchmarker.load_medium_data_files()
 
     b_simple = EditorBenchmarker(test_data, TEST_ITERATIONS, editor_type="SimpleEditor")
     simple_cut_paste_time, simple_copy_paste_time, simple_get_text_time, simple_mispellings_time = b_simple.benchmark()
@@ -408,10 +372,3 @@ if __name__ == "__main__":
         print("Misspelling is faster in Simple version by {}%".format(
             round((enhanced_mispellings_time - simple_mispellings_time) / simple_mispellings_time * 100, 2)))
         print("({}s vs {}s))".format(enhanced_mispellings_time, simple_mispellings_time))
-
-    # e = EnhancedEditor("Hello world. this is kushan's coding text.")
-    # e.print_text()
-    # e.cut(1, 4)
-    # e.print_text()
-    # e.paste(1)
-    # e.print_text()
